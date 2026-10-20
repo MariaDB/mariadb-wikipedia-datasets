@@ -214,8 +214,11 @@ Wikipedia's text is under [CC BY-SA 4.0](https://creativecommons.org/licenses/by
 use and share it, including these files, if you credit Wikipedia and its authors and share what you
 make from the text under the same licence. Every row has the article's `url` or `page_id` for the
 link. Sources: [FineWiki](https://huggingface.co/datasets/HuggingFaceFW/finewiki) (Hugging Face),
-[Wikimedia dumps](https://dumps.wikimedia.org/), the Finnish Wikipedia API. The scripts: licence to
-be decided.
+[Wikimedia dumps](https://dumps.wikimedia.org/), the Finnish Wikipedia API. The vectors in S are made
+from the text, so they carry the same licence.
+
+The scripts and documentation in this repository are under the [MIT licence](LICENSE): use them
+freely, in open or closed projects, keeping the licence text.
 
 ## Authors
 
