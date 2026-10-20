@@ -28,9 +28,15 @@ They are not the same data in three sizes — each is made for a different kind 
 | **Vectors** | **yes** — bge-m3, 1024 dimensions, one per article, all three languages | no | no — a GPU job |
 | **Extras** | categories and the category tree | who saved each version, edit summary, text hash (reverts) | — |
 | **Download** | 156 MB | 315 MB | 495 MB |
-| **Build from scratch** | ~2 h (+5 h to compute the vectors yourself) | ~25 min + 4.5 GB of downloads | ~4 min |
+| **Build from scratch** | ~2 h — mostly finding 5,254 articles in all of English Wikipedia (38 GB); +5 h to compute the vectors yourself | ~25 min + downloading 4.5 GB: every version of every Finnish page | ~4 min — two files, taken whole |
 | **Good for** | `VECTOR`, vector index, hybrid search, cross-language search | `WITH SYSTEM VERSIONING`, `FOR SYSTEM_TIME`, partitioning by time | scale: full-text search, vector indexes, partitioning |
 | **Example on MariaDB** | [mariadb-vector-wikipedia-rag](https://github.com/MariaDB/mariadb-vector-wikipedia-rag) | [mariadb-system-versioning-wikipedia](https://github.com/MariaDB/mariadb-system-versioning-wikipedia) | — |
+
+**Why the biggest builds fastest.** Build time depends on what has to be *read*, not on the size of
+the result. L takes FineWiki's two Finnish files whole. S has to find its Swedish and English articles
+— scattered across all of Swedish and English Wikipedia — so it reads nearly all of their text, and
+Hugging Face's request limits add waits. M has to unpack the edit history of every Finnish page to
+pick out ours.
 
 **Two words that are easy to mix up.** *History of Finland* is the **topic** of the articles.
 *Every version* is the **edit history** of an article. S has the topic; M has the topic *and* the
