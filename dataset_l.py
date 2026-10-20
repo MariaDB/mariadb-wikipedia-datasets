@@ -19,7 +19,7 @@ import duckdb, requests
 
 OUT, CACHE = "output/l", "cache/l"
 FINEWIKI = "HuggingFaceFW/finewiki"
-HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/robertsilen/mariadb-wikipedia-datasets)"}
+HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/MariaDB/mariadb-wikipedia-datasets)"}
 COLUMNS = "'fi' AS lang, page_id, version AS rev_id, wikidata_id, title, url, date_modified, text"
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(CACHE, exist_ok=True)
@@ -56,7 +56,7 @@ with open(f"{OUT}/README.md", "w") as f:
     f.write(f"""# Dataset L — All of Finnish Wikipedia, now
 
 {n:,} Finnish Wikipedia articles, the current text of each as clean Markdown (FineWiki, August 2025
-snapshot): {mb:,.0f} MB of text. Built by `dataset_l.py` in https://github.com/robertsilen/mariadb-wikipedia-datasets.
+snapshot): {mb:,.0f} MB of text. Built by `dataset_l.py` in https://github.com/MariaDB/mariadb-wikipedia-datasets.
 
 articles-fi.parquet: lang, page_id, rev_id, wikidata_id, title, url, date_modified, text — the
 same columns as dataset S, so code written for S runs on L.

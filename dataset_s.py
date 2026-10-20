@@ -29,8 +29,8 @@ import pyarrow as pa, pyarrow.parquet as pq
 
 OUT, CACHE = "output/s", "cache/s"
 FINEWIKI = "HuggingFaceFW/finewiki"
-RELEASE = "https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/download/s-2026-10"
-HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/robertsilen/mariadb-wikipedia-datasets)"}
+RELEASE = "https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/download/s-2026-10"
+HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/MariaDB/mariadb-wikipedia-datasets)"}
 OLLAMA, MODEL, CONTEXT = "http://localhost:11434", "bge-m3", 8192
 
 parser = argparse.ArgumentParser()
@@ -210,7 +210,7 @@ with open(f"{OUT}/README.md", "w") as f:
 {sum(counts.values()):,} Wikipedia articles: {counts['fi']:,} Finnish articles on the history of Finland
 (category Luokka:Suomen historia, three levels of subcategories, plus the main article of each named
 category one level deeper) and the {counts['sv']:,} Swedish and {counts['en']:,} English articles on the
-same topics. Built by `dataset_s.py` in https://github.com/robertsilen/mariadb-wikipedia-datasets.
+same topics. Built by `dataset_s.py` in https://github.com/MariaDB/mariadb-wikipedia-datasets.
 
 - articles-<lang>.parquet: lang, page_id, rev_id, wikidata_id (same topic across languages), title,
   url, date_modified, text (clean Markdown, from FineWiki — August 2025 snapshot).

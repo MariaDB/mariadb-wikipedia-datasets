@@ -23,7 +23,7 @@ import pyarrow as pa, pyarrow.parquet as pq
 import requests
 
 DUMP = "https://dumps.wikimedia.org/fiwiki/20261001/"
-HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/robertsilen/mariadb-wikipedia-datasets)"}
+HEADERS = {"User-Agent": "mariadb-wikipedia-datasets/1.0 (https://github.com/MariaDB/mariadb-wikipedia-datasets)"}
 OUT = "output/m"
 
 parser = argparse.ArgumentParser()
@@ -146,7 +146,7 @@ with open(os.path.join(OUT, "README.md"), "w") as f:
 Every saved version of the Finnish Wikipedia articles on the history of Finland, from the
 `pages-meta-history` dump of 1 October 2026: {total_versions:,} versions of {total_articles:,} articles,
 {text_gb:,.1f} GB of wikitext in {len(files)} Parquet files of {total_mb:,.0f} MB in all (zstd: consecutive
-versions of an article are nearly identical, so they compress very well). Built by `dataset_m.py` in https://github.com/robertsilen/mariadb-wikipedia-datasets.
+versions of an article are nearly identical, so they compress very well). Built by `dataset_m.py` in https://github.com/MariaDB/mariadb-wikipedia-datasets.
 
 One row per version, oldest first within each article. Columns: page_id, title (as it was then),
 rev_id, parent_id, timestamp (UTC, when the version was saved), user (name, IP address or

@@ -30,7 +30,7 @@ They are not the same data in three sizes — each is made for a different kind 
 | **Download** | 156 MB | 315 MB | 495 MB |
 | **Build from scratch** | ~2 h (+5 h to compute the vectors yourself) | ~25 min + 4.5 GB of downloads | ~4 min |
 | **Good for** | `VECTOR`, vector index, hybrid search, cross-language search | `WITH SYSTEM VERSIONING`, `FOR SYSTEM_TIME`, partitioning by time | scale: full-text search, vector indexes, partitioning |
-| **Example on MariaDB** | [mariadb-vector-wikipedia-rag](https://github.com/robertsilen/mariadb-vector-wikipedia-rag) | [mariadb-system-versioning-wikipedia](https://github.com/robertsilen/mariadb-system-versioning-wikipedia) | — |
+| **Example on MariaDB** | [mariadb-vector-wikipedia-rag](https://github.com/MariaDB/mariadb-vector-wikipedia-rag) | [mariadb-system-versioning-wikipedia](https://github.com/MariaDB/mariadb-system-versioning-wikipedia) | — |
 
 **Two words that are easy to mix up.** *History of Finland* is the **topic** of the articles.
 *Every version* is the **edit history** of an article. S has the topic; M has the topic *and* the
@@ -71,9 +71,9 @@ vector per article — ready for vector search.*
   run by [Ollama](https://ollama.com/library/bge-m3) — multilingual, so an English question finds
   Finnish text. bge-m3 reads 8,192 tokens; 290 longer articles (1%) were cut (`truncated`).
   **Embed your questions with the same model.** Why this model and why one vector per article:
-  the [RAG demo's README](https://github.com/robertsilen/mariadb-vector-wikipedia-rag#choices-and-why).
+  the [RAG demo's README](https://github.com/MariaDB/mariadb-vector-wikipedia-rag#choices-and-why).
 
-**Download ready-made:** the [`s-2026-10` release](https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/tag/s-2026-10)
+**Download ready-made:** the [`s-2026-10` release](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/s-2026-10)
 — 156 MB, with `SHA256SUMS`.
 
 **Build it yourself:**
@@ -95,7 +95,7 @@ python dataset_s.py --vectors embed   # compute the vectors yourself (Ollama wit
    Air M4, ~5 hours. Ollama needs both `num_ctx` and `num_batch` set to 8192 — with only the first,
    anything over 2,048 tokens is refused or cut.
 
-**Use it with MariaDB:** the [RAG demo](https://github.com/robertsilen/mariadb-vector-wikipedia-rag)
+**Use it with MariaDB:** the [RAG demo](https://github.com/MariaDB/mariadb-vector-wikipedia-rag)
 loads exactly these files (`load.py --vectors`) into a table with a `VECTOR(1024)` column and a
 vector index, with search page, evaluation and measured index settings.
 
@@ -125,7 +125,7 @@ material for "what did this article say on 3 April 2016?"*
   not the one just before it, is a **revert**.
 - **Not in it:** versions an administrator has hidden; the dumps carry only what anyone may see.
 
-**Download ready-made:** the [`m-2026-10` release](https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/tag/m-2026-10)
+**Download ready-made:** the [`m-2026-10` release](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/m-2026-10)
 — 16 files, 315 MB in all, with `SHA256SUMS`. 12.2 GB of wikitext compress this well because
 consecutive versions of an article are nearly identical, and zstd sees them side by side.
 
@@ -143,7 +143,7 @@ python dataset_m.py --dumps ~/wikidumps   # keep the 4.5 GB of dump files elsewh
 2. **Stream** each file through 7-Zip and keep the listed articles — nothing big is unpacked to
    disk. 1–2.5 minutes per file, ~21 minutes for all 16 on a MacBook Air M4.
 
-**Use it with MariaDB:** the [time machine demo](https://github.com/robertsilen/mariadb-system-versioning-wikipedia)
+**Use it with MariaDB:** the [time machine demo](https://github.com/MariaDB/mariadb-system-versioning-wikipedia)
 writes versions like these into a system-versioned table with Wikipedia's real edit times
 (`system_versioning_insert_history`), measured and explained — for 50 articles. Its loader reads
 the dump files directly; loading these Parquet files instead is the same few lines *(to do there)*.
@@ -173,7 +173,7 @@ articles took 1.2 GB with `COMPRESSED` columns — plan ~5–7 GB for all of M.
   [SQL dumps](https://dumps.wikimedia.org/fiwiki/20261001/) (`categorylinks`, `linktarget`, `page`)
   if you need them.
 
-**Download ready-made:** the [`l-2026-10` release](https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/tag/l-2026-10)
+**Download ready-made:** the [`l-2026-10` release](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/l-2026-10)
 — one file, 495 MB, with `SHA256SUMS`.
 
 **Build it yourself:**
@@ -191,7 +191,7 @@ version of each.
 ## Before you start
 
 ```bash
-git clone https://github.com/robertsilen/mariadb-wikipedia-datasets.git
+git clone https://github.com/MariaDB/mariadb-wikipedia-datasets.git
 cd mariadb-wikipedia-datasets
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt       # duckdb, pyarrow, requests
