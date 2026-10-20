@@ -136,13 +136,17 @@ for n, name in enumerate(sorted(sums, key=lambda s: int(re.search(r"-p(\d+)p", s
 files = sorted(f for f in os.listdir(OUT) if f.endswith(".parquet"))
 meta = [pq.ParquetFile(os.path.join(OUT, f)).metadata for f in files]
 total_versions = sum(m.num_rows for m in meta)
+ids = pa.concat_tables(pq.read_table(os.path.join(OUT, f), columns=["page_id", "bytes"]) for f in files)
+total_articles = len(set(ids.column("page_id").to_pylist()))
+text_gb = sum(ids.column("bytes").to_pylist()) / 1e9
 total_mb = sum(os.path.getsize(os.path.join(OUT, f)) for f in files) / 1e6
 with open(os.path.join(OUT, "README.md"), "w") as f:
     f.write(f"""# Dataset M — History of Finland, every version
 
 Every saved version of the Finnish Wikipedia articles on the history of Finland, from the
-`pages-meta-history` dump of 1 October 2026: {total_versions:,} versions in {len(files)} Parquet files,
-{total_mb:,.0f} MB (zstd). Built by `dataset_m.py` in https://github.com/robertsilen/mariadb-wikipedia-datasets.
+`pages-meta-history` dump of 1 October 2026: {total_versions:,} versions of {total_articles:,} articles,
+{text_gb:,.1f} GB of wikitext in {len(files)} Parquet files of {total_mb:,.0f} MB in all (zstd: consecutive
+versions of an article are nearly identical, so they compress very well). Built by `dataset_m.py` in https://github.com/robertsilen/mariadb-wikipedia-datasets.
 
 One row per version, oldest first within each article. Columns: page_id, title (as it was then),
 rev_id, parent_id, timestamp (UTC, when the version was saved), user (name, IP address or

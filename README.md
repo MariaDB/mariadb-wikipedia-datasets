@@ -7,8 +7,7 @@ one Python script from Wikipedia's public sources.
 Made for hackathons and courses: the same data for everyone, real Wikipedia ids so every result
 links back to the live page, and nothing that needs an account or an API key.
 
-> **Status:** S and L are built and checked; M is being built. Download links point to this repo's
-> GitHub releases for now. *(Sizes and times marked TBD are filled in from the runs.)*
+> **Status:** all three are built, checked and published as this repo's GitHub releases.
 
 ## Which one?
 
@@ -22,14 +21,14 @@ They are not the same data in three sizes — each is made for a different kind 
 
 | | **S — History of Finland, now** | **M — History of Finland, every version** | **L — All of Finnish Wikipedia, now** |
 |---|---|---|---|
-| **Articles** | 19,285 fi · 4,921 sv · 5,254 en | 19,285 fi *(TBD)* | ~573,000 fi *(TBD)* |
-| **Versions** | the current one | every saved version, 2002 – 1 Oct 2026: *TBD* | the current one |
+| **Articles** | 19,285 fi · 4,921 sv · 5,254 en | 19,742 fi | 568,416 fi |
+| **Versions** | the current one | every saved version, 2003 – 1 Oct 2026: **862,076** (12.2 GB of text) | the current one |
 | **Text** | clean Markdown (from Wikipedia's rendered pages) | raw wikitext — the only form old versions exist in | clean Markdown |
 | **Snapshot** | August 2025 (FineWiki) | 1 October 2026 (Wikimedia dumps) | August 2025 (FineWiki) |
 | **Vectors** | **yes** — bge-m3, 1024 dimensions, one per article, all three languages | no | no — a GPU job |
 | **Extras** | categories and the category tree | who saved each version, edit summary, text hash (reverts) | — |
-| **Download** | 156 MB | *TBD* | *TBD* |
-| **Build from scratch** | ~2 h (+5 h to compute the vectors yourself) | ~1 h + 4.5 GB of downloads | ~5 min |
+| **Download** | 156 MB | 315 MB | 495 MB |
+| **Build from scratch** | ~2 h (+5 h to compute the vectors yourself) | ~25 min + 4.5 GB of downloads | ~4 min |
 | **Good for** | `VECTOR`, vector index, hybrid search, cross-language search | `WITH SYSTEM VERSIONING`, `FOR SYSTEM_TIME`, partitioning by time | scale: full-text search, vector indexes, partitioning |
 | **Example on MariaDB** | [mariadb-vector-wikipedia-rag](https://github.com/robertsilen/mariadb-vector-wikipedia-rag) | [mariadb-system-versioning-wikipedia](https://github.com/robertsilen/mariadb-system-versioning-wikipedia) | — |
 
@@ -111,20 +110,24 @@ material for "what did this article say on 3 April 2016?"*
 
 | File | Rows | Columns |
 |---|---|---|
-| `versions-01.parquet` … `versions-16.parquet` | *TBD* versions | `page_id`, `title`, `rev_id`, `parent_id`, `timestamp` (UTC), `user`, `anonymous`, `comment`, `minor`, `sha1`, `bytes`, `text` |
+| `versions-01.parquet` … `versions-16.parquet` | 862,076 versions of 19,742 articles | `page_id`, `title`, `rev_id`, `parent_id`, `timestamp` (UTC), `user`, `anonymous`, `comment`, `minor`, `sha1`, `bytes`, `text` |
 
-- **Which articles:** the Finnish articles of S (the same list).
+- **Which articles:** the Finnish articles of S (the same list). 19,742 of the 19,754 listed are in
+  the dumps; the other 12 were deleted or renamed after the list was made. S has fewer (19,285)
+  because FineWiki's snapshot is older.
 - **Which versions:** all of them, from the first in 2002 to 1 October 2026, oldest first per article.
   One output file per dump file.
 - **Text:** raw wikitext. Wikipedia keeps old versions only as wikitext — no clean Markdown exists
   for them.
-- **`anonymous`:** saved by an IP address — or, since 2025, by a temporary account named like
+- **`anonymous`:** 19% of the versions. Saved by an IP address — or, since 2025, by a temporary account named like
   `~2026-33532-4`, when Wikipedia stopped publishing anonymous editors' IP addresses.
 - **`sha1`:** the same hash means the same text. A version whose text equals an earlier one, but
   not the one just before it, is a **revert**.
 - **Not in it:** versions an administrator has hidden; the dumps carry only what anyone may see.
 
-**Download ready-made:** the `m-2026-10` release — *TBD*.
+**Download ready-made:** the [`m-2026-10` release](https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/tag/m-2026-10)
+— 16 files, 315 MB in all, with `SHA256SUMS`. 12.2 GB of wikitext compress this well because
+consecutive versions of an article are nearly identical, and zstd sees them side by side.
 
 **Build it yourself:**
 
@@ -138,11 +141,14 @@ python dataset_m.py --dumps ~/wikidumps   # keep the 4.5 GB of dump files elsewh
    every page on Finnish Wikipedia. Resumes; checked against Wikimedia's SHA-1 sums. ~35 min at
    1.6 MB/s.
 2. **Stream** each file through 7-Zip and keep the listed articles — nothing big is unpacked to
-   disk. *TBD: time.*
+   disk. 1–2.5 minutes per file, ~21 minutes for all 16 on a MacBook Air M4.
 
 **Use it with MariaDB:** the [time machine demo](https://github.com/robertsilen/mariadb-system-versioning-wikipedia)
 writes versions like these into a system-versioned table with Wikipedia's real edit times
-(`system_versioning_insert_history`) — for 50 articles; its loader reads the dump files directly.
+(`system_versioning_insert_history`), measured and explained — for 50 articles. Its loader reads
+the dump files directly; loading these Parquet files instead is the same few lines *(to do there)*.
+In a MariaDB table the text takes far more room than in Parquet: the demo's 2 GB of text for 50
+articles took 1.2 GB with `COMPRESSED` columns — plan ~5–7 GB for all of M.
 
 ---
 
@@ -154,9 +160,10 @@ writes versions like these into a system-versioned table with Wikipedia's real e
 
 | File | Rows | Columns |
 |---|---|---|
-| `articles-fi.parquet` | *TBD* | the same as S: `lang`, `page_id`, `rev_id`, `wikidata_id`, `title`, `url`, `date_modified`, `text` |
+| `articles-fi.parquet` | 568,416 | the same as S: `lang`, `page_id`, `rev_id`, `wikidata_id`, `title`, `url`, `date_modified`, `text` |
 
-- **Text:** clean Markdown from FineWiki, August 2025 — the same kind of text as S.
+- **Text:** clean Markdown from FineWiki, August 2025 — the same kind of text as S: 1.4 GB.
+  All 19,285 Finnish articles of S are in L, in the same version.
 - **No vectors.** At ~100 articles a minute on a laptop, embedding all of it would take days —
   a GPU job, or a sample. Ready-made vectors at this scale exist from
   [Cohere](https://huggingface.co/datasets/CohereLabs/wikipedia-2023-11-embed-multilingual-v3)
@@ -166,7 +173,8 @@ writes versions like these into a system-versioned table with Wikipedia's real e
   [SQL dumps](https://dumps.wikimedia.org/fiwiki/20261001/) (`categorylinks`, `linktarget`, `page`)
   if you need them.
 
-**Download ready-made:** the `l-2026-10` release — *TBD*.
+**Download ready-made:** the [`l-2026-10` release](https://github.com/robertsilen/mariadb-wikipedia-datasets/releases/tag/l-2026-10)
+— one file, 495 MB, with `SHA256SUMS`.
 
 **Build it yourself:**
 
@@ -174,7 +182,9 @@ writes versions like these into a system-versioned table with Wikipedia's real e
 python dataset_l.py
 ```
 
-Reads FineWiki's two Finnish files (1.65 GB) with DuckDB, only the columns needed. *TBD: time.*
+Reads FineWiki's two Finnish files (1.65 GB) with DuckDB, only the columns needed: ~2 minutes
+each on a 3 MB/s line. FineWiki has some articles twice (572,900 rows); the script keeps the newest
+version of each.
 
 ---
 
@@ -190,7 +200,7 @@ pip install -r requirements.txt       # duckdb, pyarrow, requests
 | | S | M | L |
 |---|---|---|---|
 | Python 3.11+ | ✓ | ✓ | ✓ |
-| Free disk | ~0.5 GB | *TBD* + 4.5 GB of dumps | *TBD* |
+| Free disk | ~0.5 GB | 0.3 GB + 4.5 GB of dumps | ~1 GB |
 | Other | Ollama + bge-m3, only for `--vectors embed` | 7-Zip (`7zz`) | — |
 | Accounts / API keys | none | none | none |
 
