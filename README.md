@@ -7,7 +7,12 @@ one Python script from Wikipedia's public sources.
 Made for hackathons and courses: the same data for everyone, real Wikipedia ids so every result
 links back to the live page, and nothing that needs an account or an API key.
 
-> **Status:** all three are built, checked and published as this repo's GitHub releases.
+**Download:** every file is ready in this repository's
+[releases](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases) —
+[S](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/s-2026-10) (156 MB),
+[M](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/m-2026-10) (315 MB),
+[L](https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/tag/l-2026-10) (495 MB), each with
+`SHA256SUMS`. The scripts are for building them yourself, or for another topic.
 
 ## Which one?
 
